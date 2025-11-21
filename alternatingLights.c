@@ -1,73 +1,103 @@
 #include <REGX52.h>
 
-// Define Button Pin. 
-// Note: Standard AT89S52 does not have Port 4. 
-// We are using P3.2 (standard input/interrupt pin) instead.
 sbit BUTTON = P3^2; 
+
+// Change 'bit' to 'unsigned char' to hold numbers 0-255
+unsigned char mode = 0; 
+
+// Define how many modes we have so we can loop back to 0
+#define TOTAL_MODES 4 
 
 void delay_short(void);
 bit check_button(void);
 
-// Global mode variable: 0 = Knight Rider, 1 = Chase
-bit mode = 0; 
-
 void main()
 {
 	unsigned char i;
-	
-	// Initialize Button (Input)
-	BUTTON = 1; 
+	BUTTON = 1; // Init input
 
 	while(1)
 	{
-		if(mode == 0) // --- Mode 0: Knight Rider Pattern ---
+		switch(mode)
 		{
-			// 1. Sweep Left
-			for(i = 0; i < 8; i++)
-			{
-				P1 = (0x01 << i); 
-				delay_short();
-				if(check_button()) break; // Exit loop if mode changed
-			}
-			
-			// 2. Sweep Right (only if mode hasn't changed)
-			if(mode == 0) 
-			{
-				for(i = 6; i > 0; i--)
-				{
+			// --- MODE 0: Knight Rider ---
+			case 0:
+				for(i = 0; i < 8; i++) {
+					P1 = (0x01 << i); 
+					delay_short();
+					if(check_button()) break;
+				}
+				if(mode != 0) break; // Exit if button changed mode
+				for(i = 6; i > 0; i--) {
 					P1 = (0x01 << i);
 					delay_short();
 					if(check_button()) break;
 				}
-			}
-		}
-		else // --- Mode 1: Chase Light Pattern ---
-		{
-			// Continuous Left Shift (loops 0 to 7 then restarts at 0)
-			for(i = 0; i < 8; i++)
-			{
-				P1 = (0x01 << i);
+				break;
+
+			// --- MODE 1: Chase Light (Left to Right) ---
+			case 1:
+				for(i = 0; i < 8; i++) {
+					P1 = (0x01 << i);
+					delay_short();
+					if(check_button()) break;
+				}
+				break;
+
+			// --- MODE 2: Blink All LEDs ---
+			case 2:
+				P1 = 0xFF; // All ON
 				delay_short();
 				if(check_button()) break;
-			}
+				
+				P1 = 0x00; // All OFF
+				delay_short();
+				if(check_button()) break;
+				break;
+
+			// --- MODE 3: Binary Counter ---
+			case 3:
+				for(i = 0; i < 255; i++) {
+					P1 = ~i; // 'Not' operator used because LEDs are usually active LOW
+					         // Remove '~' if your LEDs are active HIGH
+					delay_short();
+					if(check_button()) break;
+				}
+				break;
+
+			// --- Mode 4: odd-even lights ---
+			case 4:
+				for(i = 0; i != 8; i+2) //starts with LED 1 on and then shifts the '1' bit to left twice each loop changing the led
+        {
+            P1 = (0x01 << i);
+            delay_ms();
+        }
+
+        for(i = 7; i != 1; i-2) //starts with LED 8 on and then shifts the '1' bit to right twice each loop changing the led
+        {
+            P1 = (0x01 << i);
+            delay_ms();
+
+        }
+				break;
 		}
 	}
 }
 
-// Checks button state, debounces, and toggles mode.
-// Returns 1 if mode was changed, 0 otherwise.
 bit check_button(void)
 {
-	if(BUTTON == 0) // Check if button pressed (Active Low)
+	if(BUTTON == 0) 
 	{
-		delay_short(); // Simple debounce using existing delay
+		delay_short(); 
 		if(BUTTON == 0)
 		{
-			mode = !mode; // Toggle the mode
+			mode++; // Go to next mode
+			if(mode >= TOTAL_MODES) // If we pass the last mode...
+			{
+				mode = 0; // ...reset to the start
+			}
 			
-			// Wait for button release to prevent rapid toggling
-			while(BUTTON == 0); 
-			
+			while(BUTTON == 0); // Wait for release
 			return 1; // Signal that mode changed
 		}
 	}
