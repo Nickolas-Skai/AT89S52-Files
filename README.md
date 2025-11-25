@@ -187,7 +187,3 @@ Key pins:
 * **Pin 20 — GND**
 * **Pin 40 — VCC**
 
-
----
-
-This document should allow your colleague to understand your setup, reproduce it, and debug it efficiently.
