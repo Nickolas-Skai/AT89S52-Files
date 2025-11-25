@@ -187,11 +187,6 @@ Key pins:
 * **Pin 20 — GND**
 * **Pin 40 — VCC**
 
----
-
-## 10. Final Checklist Before Programming
-
-*
 
 ---
 
