@@ -1,0 +1,45 @@
+AT89S52 40-Pin DIP Pinout (Top View)
+=====================================
+
+        ___  ___
+   P1.0 |1  \/  40| VCC (5V)
+   P1.1 |2      39| P0.0
+   P1.2 |3      38| P0.1
+   P1.3 |4      37| P0.2
+   P1.4 |5      36| P0.3
+   P1.5 |6      35| P0.4
+→ P1.6  |7      34| P0.5  ← MISO connects HERE (Pin 7)
+   P1.7 |8      33| P0.6
+   RST  |9      32| P0.7
+  (RXD) |10     31| EA/VPP
+  (TXD) |11     30| ALE/PROG
+   P3.2 |12     29| PSEN
+   P3.3 |13     28| P2.7
+   P3.4 |14     27| P2.6
+   P3.5 |15     26| P2.5
+   P3.6 |16     25| P2.4
+   P3.7 |17     24| P2.3
+→ XTAL2 |18     23| P2.2  ← Crystal pin 2
+→ XTAL1 |19     22| P2.1  ← Crystal pin 1
+   GND  |20     21| P2.0
+        ‾‾‾‾‾‾‾‾
+
+Critical Connections for Programming:
+======================================
+Arduino → AT89S52
+Pin 10  → Pin 9  (RESET - active HIGH for AT89S52!)
+Pin 11  → Pin 6  (MOSI / P1.5)
+Pin 12  → Pin 7  (MISO / P1.6)  ← YOU ARE HERE
+Pin 13  → Pin 5  (SCK / P1.4)
+GND     → Pin 20 (GND)
+5V      → Pin 40 (VCC)
+
+Crystal Oscillator:
+===================
+12MHz crystal between Pin 18 (XTAL2) and Pin 19 (XTAL1)
+22pF capacitor from Pin 18 to GND (currently removed)
+22pF capacitor from Pin 19 to GND (currently removed)
+
+Other Required:
+===============
+Pin 31 (EA/VPP) → Connect to VCC (5V) for internal code execution

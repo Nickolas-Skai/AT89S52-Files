@@ -1,0 +1,22 @@
+AT89S52 Crystal Oscillator Setup
+=================================
+
+Required Components:
+- 1x 12MHz crystal oscillator
+- 2x 22pF ceramic capacitors (NOT 22µF, NOT 20µF!)
+
+Connections:
+- Crystal lead 1 → AT89S52 Pin 19 (XTAL1) → 22pF cap to GND
+- Crystal lead 2 → AT89S52 Pin 18 (XTAL2) → 22pF cap to GND
+
+Common mistakes:
+✗ Using 20µF or 22µF capacitors (too large by ~1 billion times!)
+✓ Use 22pF (picofarads) - typically small ceramic disk capacitors
+
+Capacitor identification:
+- 22pF caps are marked: "22" or "220" (220 means 22 × 10^0 = 22pF)
+- 20µF caps are marked: "20µF" or "206" (much larger, electrolytic)
+
+Alternative for testing:
+- You can temporarily remove capacitors entirely to test if oscillator works
+- This is not recommended for production but confirms the diagnosis
